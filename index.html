@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D Print Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #fff;
+      color: #111;
+      font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 40px;
+    }
+
+    .nav-logo {
+      font-family: "Fraunces", serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    }
+
+    .nav-logo span { font-style: italic; font-weight: 300; }
+
+    /* ── VIDEO HERO ── */
+    .video-hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 500px;
+      overflow: hidden;
+      background: #111;
+    }
+
+    /* iframe fills the hero, pointer-events off so overlay/buttons work */
+    .video-hero iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+
+    .video-hero .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.3) 0%,
+        rgba(0,0,0,0.1) 40%,
+        rgba(0,0,0,0.6) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-text {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 60px 60px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeUp 0.9s ease both;
+      z-index: 2;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .hero-headline {
+      font-family: "Fraunces", serif;
+      font-size: clamp(36px, 5.5vw, 72px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: #fff;
+      max-width: 680px;
+    }
+
+    .hero-headline em { font-style: italic; }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 34px;
+      background: #fff;
+      color: #111;
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border-radius: 100px;
+      transition: all 0.2s ease;
+      align-self: flex-start;
+      margin-top: 8px;
+    }
+
+    .cta-btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+
+    .cta-btn svg { transition: transform 0.2s ease; }
+    .cta-btn:hover svg { transform: translateX(4px); }
+
+    .video-badge {
+      position: absolute;
+      top: 24px;
+      right: 40px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      z-index: 2;
+    }
+
+    /* ── STEPS ── */
+    .steps-section {
+      padding: 96px 60px;
+      border-bottom: 1px solid #ebebeb;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 52px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .section-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ebebeb;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .step {
+      padding: 0 40px 0 0;
+      border-right: 1px solid #ebebeb;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step:last-child {
+      border-right: none;
+      padding-right: 0;
+      padding-left: 40px;
+    }
+
+    .step:nth-child(2) { padding-left: 40px; }
+
+    .step-num {
+      font-family: "Fraunces", serif;
+      font-size: 52px;
+      font-weight: 300;
+      color: #e8e8e8;
+      line-height: 1;
+    }
+
+    .step-title {
+      font-family: "Fraunces", serif;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #888;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      padding: 110px 60px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 28px;
+    }
+
+    .bottom-headline {
+      font-family: "Fraunces", serif;
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      max-width: 540px;
+      line-height: 1.1;
+    }
+
+    .bottom-headline em { font-style: italic; }
+
+    .bottom-sub {
+      font-size: 15px;
+      color: #888;
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .cta-btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 34px;
+      background: #111;
+      color: #fff;
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border-radius: 100px;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .cta-btn-dark:hover {
+      background: #333;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+    }
+
+    .cta-btn-dark svg { transition: transform 0.2s ease; }
+    .cta-btn-dark:hover svg { transform: translateX(4px); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 28px 60px;
+      border-top: 1px solid #ebebeb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 700px) {
+      nav { padding: 18px 20px; }
+      .hero-text { padding: 40px 24px 48px; gap: 16px; }
+      .video-badge { right: 20px; top: 18px; }
+      .steps-section { padding: 64px 24px; }
+      .steps { grid-template-columns: 1fr; gap: 40px; }
+      .step, .step:last-child, .step:nth-child(2) {
+        padding: 0;
+        border-right: none;
+        border-bottom: 1px solid #ebebeb;
+        padding-bottom: 40px;
+      }
+      .step:last-child { border-bottom: none; padding-bottom: 0; }
+      .bottom-cta { padding: 72px 24px; }
+      .cta-btn-dark { width: 100%; justify-content: center; }
+      .cta-btn { align-self: stretch; justify-content: center; }
+      footer { padding: 24px; flex-direction: column; gap: 6px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Print<span>Studio</span></div>
+</nav>
+
+<!-- VIDEO HERO -->
+<div class="video-hero">
+  <iframe
+    src="https://drive.google.com/file/d/1QEl7pGjh7cPz52NfzkUd4JW_Lzuj1aK4/preview?autoplay=1&loop=1&controls=0&rel=0&modestbranding=1"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    title="3D Print Time Lapse"
+  ></iframe>
+  <div class="overlay"></div>
+  <div class="video-badge">Time&#8209;Lapse Print</div>
+
+  <div class="hero-text">
+    <span class="hero-tag">Custom 3D Printing</span>
+    <h1 class="hero-headline">We print <em>anything</em><br/>you imagine.</h1>
+    <a class="cta-btn" href="https://makerworld.com" target="_blank" rel="noopener">
+      Find a print you want us to make
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<!-- STEPS -->
+<section class="steps-section">
+  <div class="section-eyebrow">How it works</div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Browse &amp; Pick</div>
+      <p class="step-desc">Head to MakerWorld and find a model you love. Thousands of free designs to choose from — just pick what catches your eye.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Show Us</div>
+      <p class="step-desc">Share the model with us — send the link or a screenshot. We'll take a look, confirm the details, and get everything ready to print.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">We'll Have It Made for You to Pick Up</div>
+      <p class="step-desc">We handle all the printing. Once it's done we'll let you know and you can come pick it up — no shipping, no waiting around.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="bottom-cta">
+  <h2 class="bottom-headline">Find something <em>you love</em> and we'll print it.</h2>
+  <p class="bottom-sub">Browse MakerWorld's huge library of models, pick anything that catches your eye, and let us do the rest.</p>
+  <a class="cta-btn-dark" href="https://makerworld.com" target="_blank" rel="noopener">
+    Find a print you want us to make
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 PrintStudio</span>
+  <span>Custom 3D Printing, Made Easy</span>
+</footer>
+
+</body>
+</html>
